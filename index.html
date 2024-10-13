@@ -32,7 +32,7 @@
             color: #b3b3b3; /* Светло-серый для текста полей */
         }
 
-        textarea, input {
+        textarea, input[type="text"] {
             width: 100%;
             padding: 10px;
             margin-bottom: 15px;
@@ -61,6 +61,17 @@
         button:hover {
             background-color: #357ab9; /* Темнее при наведении */
         }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            color: #b3b3b3; /* Светло-серый для текста чекбокса */
+        }
+
+        input[type="checkbox"] {
+            margin-right: 10px; /* Отступ между чекбоксом и текстом */
+        }
     </style>
 </head>
 <body>
@@ -83,33 +94,45 @@
         <input type="text" id="name" placeholder="Аква">
 
         <label for="prompt_p">Описание внешности:</label>
-        <input type="text" id="prompt_p" maxlength="200" placeholder="Аква из коносубы, голубые волосы, голубые глаза, спортивное тело">
+        <input type="text" id="prompt_p" placeholder="Аква из коносубы, голубые волосы, голубые глаза, спортивное тело">
 
-        <!-- Кнопка для отправки данных -->
-        <button id="sendDataBtn">Отправить данные</button>
+        <!-- Чекбокс "Это реальный человек?" -->
+        <div class="checkbox-label">
+            <input type="checkbox" id="realPerson">
+            <label for="realPerson">Это реальный человек?</label>
+        </div>
+
+        <!-- Кнопка для копирования данных -->
+        <button id="copyDataBtn">Копировать данные</button>
     </div>
 
     <script>
-        document.getElementById("sendDataBtn").addEventListener("click", function() {
+        document.getElementById("copyDataBtn").addEventListener("click", function() {
             // Получаем значения из полей ввода
             const instruct = document.getElementById("instruct").value;
             const greeting = document.getElementById("greeting").value;
             const name = document.getElementById("name").value;
             const prompt_p = document.getElementById("prompt_p").value;
+            const realPerson = document.getElementById("realPerson").checked; // Получаем состояние чекбокса
 
-            // Создаем объект данных
+            // Создаем объект данных с русскими ключами
             const data = {
-                instruct: instruct || '',
-                greeting: greeting || '',
-                name: name || '',
-                prompt_p: prompt_p || ''
+                "поведение": instruct,
+                "приветствие": greeting,
+                "имя": name,
+                "описание": prompt_p,
+                "реальный человек": realPerson ? "ДА" : "НЕТ" // Используем "ДА" или "НЕТ" в зависимости от состояния чекбокса
             };
 
-            // Отправляем данные в Telegram бота через WebApp API
-            Telegram.WebApp.sendData(JSON.stringify(data));
+            // Преобразуем объект в JSON строку
+            const jsonData = JSON.stringify(data, null, 2); // Второй параметр для удобочитаемости
 
-            // Сообщение пользователю о том, что данные отправлены
-            alert("Данные отправлены!");
+            // Копируем данные в буфер обмена
+            navigator.clipboard.writeText(jsonData).then(function() {
+                alert("Данные скопированы, вставьте их в бота и отправьте");
+            }, function(err) {
+                console.error('Ошибка при копировании: ', err);
+            });
         });
     </script>
 
