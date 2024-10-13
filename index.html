@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Создание персонажа</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body {
+            background-color: #2b2b35; /* Серый фон страницы */
+            color: #dcdcdc; /* Светлый текст */
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center; /* Центрируем контент по горизонтали */
+        }
+
+        .form-container {
+            max-width: 400px; /* Максимальная ширина формы */
+            width: 100%; /* Делаем ширину 100%, чтобы не вылезать за край */
+        }
+
+        h1 {
+            color: #ffffff; /* Белый заголовок */
+            text-align: center;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #b3b3b3; /* Светло-серый для текста полей */
+        }
+
+        textarea, input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #444;
+            border-radius: 4px;
+            background-color: #2c2c38; /* Тёмные поля */
+            color: #ffffff; /* Белый текст в полях */
+            box-sizing: border-box; /* Учитываем padding в ширине, чтобы не вылазить за край */
+        }
+
+        textarea {
+            height: 100px; /* Увеличенная высота для текстового поля */
+            resize: none; /* Отключить изменение размера вручную */
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #4a90e2; /* Синий цвет кнопки */
+            color: #ffffff; /* Белый текст на кнопке */
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #357ab9; /* Темнее при наведении */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="form-container">
+        <h1>Введите данные персонажа</h1>
+
+        <!-- Поля для ввода данных -->
+        <label for="instruct">Поведение:</label>
+        <textarea id="instruct" maxlength="200" placeholder="Ты Аква из аниме Коносуба, ты богиня, которая попала в обычный мир, ты веселая и любишь выпить. Ты тайна влюблена в главного героя"></textarea>
+
+        <label for="greeting">Приветствие:</label>
+        <textarea id="greeting" maxlength="100" placeholder="*смущенно смотрит на тебя*
+
+Т-ты очень красивый...
+
+*прикрыла лицо руками*"></textarea>
+
+        <label for="name">Имя:</label>
+        <input type="text" id="name" placeholder="Аква">
+
+        <label for="prompt_p">Описание внешности:</label>
+        <input type="text" id="prompt_p" maxlength="200" placeholder="Аква из коносубы, голубые волосы, голубые глаза, спортивное тело">
+
+        <!-- Кнопка для отправки данных -->
+        <button id="sendDataBtn">Отправить данные</button>
+    </div>
+
+    <script>
+        document.getElementById("sendDataBtn").addEventListener("click", function() {
+            // Получаем значения из полей ввода
+            const instruct = document.getElementById("instruct").value;
+            const greeting = document.getElementById("greeting").value;
+            const name = document.getElementById("name").value;
+            const prompt_p = document.getElementById("prompt_p").value;
+
+            // Создаем объект данных
+            const data = {
+                instruct: instruct || '',
+                greeting: greeting || '',
+                name: name || '',
+                prompt_p: prompt_p || ''
+            };
+
+            // Отправляем данные в Telegram бота через WebApp API
+            Telegram.WebApp.sendData(JSON.stringify(data));
+
+            // Сообщение пользователю о том, что данные отправлены
+            alert("Данные отправлены!");
+        });
+    </script>
+
+</body>
+</html>
