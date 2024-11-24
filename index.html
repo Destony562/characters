@@ -6,70 +6,94 @@
     <title>Создание персонажа</title>
     <style>
         body {
-            background-color: #2b2b35; /* Серый фон страницы */
-            color: #dcdcdc; /* Светлый текст */
+            background-color: #1e2a38; /* Темно-синий фон */
+            color: #dce4f0; /* Светло-голубой текст */
             font-family: 'Arial', sans-serif;
             margin: 0;
             padding: 20px;
             display: flex;
-            justify-content: center; /* Центрируем контент по горизонтали */
+            justify-content: center;
+            align-items: center; /* Центрируем контент по вертикали */
+            height: 100vh;
         }
 
         .form-container {
-            max-width: 400px; /* Максимальная ширина формы */
-            width: 100%; /* Делаем ширину 100%, чтобы не вылезать за край */
+            max-width: 400px;
+            width: 100%;
+            padding: 20px;
+            background-color: #243447; /* Темный контейнер с голубым оттенком */
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); /* Тень */
         }
 
         h1 {
-            color: #ffffff; /* Белый заголовок */
+            color: #a7c6eb; /* Светло-голубой заголовок */
             text-align: center;
+            margin-bottom: 20px;
         }
 
         label {
             display: block;
             margin-bottom: 5px;
-            color: #b3b3b3; /* Светло-серый для текста полей */
+            color: #b3cbe5; /* Светлый оттенок текста полей */
         }
 
         textarea, input[type="text"] {
             width: 100%;
             padding: 10px;
             margin-bottom: 15px;
-            border: 1px solid #444;
+            border: 1px solid #4a6fa6;
             border-radius: 4px;
-            background-color: #2c2c38; /* Тёмные поля */
+            background-color: #1c2c3a; /* Тёмные поля */
             color: #ffffff; /* Белый текст в полях */
-            box-sizing: border-box; /* Учитываем padding в ширине, чтобы не вылазить за край */
+            box-sizing: border-box;
         }
 
         textarea {
-            height: 100px; /* Увеличенная высота для текстового поля */
-            resize: none; /* Отключить изменение размера вручную */
+            height: 100px;
+            resize: none;
         }
 
         button {
             width: 100%;
             padding: 10px;
-            background-color: #4a90e2; /* Синий цвет кнопки */
-            color: #ffffff; /* Белый текст на кнопке */
+            background-color: #528bda; /* Голубая кнопка */
+            color: #ffffff; /* Белый текст */
             border: none;
             border-radius: 4px;
             cursor: pointer;
+            font-size: 16px;
         }
 
         button:hover {
-            background-color: #357ab9; /* Темнее при наведении */
+            background-color: #356bb3; /* Темнее при наведении */
         }
 
         .checkbox-label {
             display: flex;
             align-items: center;
             margin-bottom: 15px;
-            color: #b3b3b3; /* Светло-серый для текста чекбокса */
+            color: #b3cbe5;
         }
 
         input[type="checkbox"] {
-            margin-right: 10px; /* Отступ между чекбоксом и текстом */
+            margin-right: 10px;
+        }
+
+        .copy-output {
+            margin-top: 15px;
+            background-color: #1c2c3a;
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid #4a6fa6;
+            color: #dce4f0;
+            white-space: pre-wrap; /* Сохраняем форматирование JSON */
+        }
+
+        .copy-note {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #a7c6eb;
         }
     </style>
 </head>
@@ -80,10 +104,10 @@
 
         <!-- Поля для ввода данных -->
         <label for="instruct">Поведение:</label>
-        <textarea id="instruct" maxlength="400" placeholder="Ты Аква из аниме Коносуба, ты богиня, которая попала в обычный мир, ты веселая и любишь выпить. Ты тайна влюблена в главного героя"></textarea>
+        <textarea id="instruct" maxlength="700" placeholder="Ты Аква из аниме Коносуба, ты богиня, которая попала в обычный мир, ты веселая и любишь выпить. Ты тайна влюблена в главного героя"></textarea>
 
         <label for="greeting">Приветствие:</label>
-        <textarea id="greeting" maxlength="100" placeholder="*смущенно смотрит на тебя*
+        <textarea id="greeting" maxlength="200" placeholder="*смущенно смотрит на тебя*
 
 Т-ты очень красивый...
 
@@ -103,10 +127,14 @@
 
         <!-- Кнопка для копирования данных -->
         <button id="copyDataBtn">Копировать данные</button>
+
+        <!-- Поле для вывода данных -->
+        <pre id="copyOutput" class="copy-output"></pre>
+        <p class="copy-note">Если данные не скопировались автоматически, скопируйте их отсюда и отправьте боту</p>
     </div>
 
     <script>
-        document.getElementById("copyDataBtn").addEventListener("click", function() {
+        document.getElementById("copyDataBtn").addEventListener("click", function () {
             // Получаем значения из полей ввода
             const instruct = document.getElementById("instruct").value;
             const greeting = document.getElementById("greeting").value;
@@ -126,11 +154,15 @@
             // Преобразуем объект в JSON строку
             const jsonData = JSON.stringify(data, null, 2); // Второй параметр для удобочитаемости
 
-            // Копируем данные в буфер обмена
-            navigator.clipboard.writeText(jsonData).then(function() {
-                alert("Данные скопированы, вставьте их в бота и отправьте");
-            }, function(err) {
-                console.error('Ошибка при копировании: ', err);
+            // Показываем текст в поле для копирования
+            const output = document.getElementById("copyOutput");
+            output.textContent = jsonData;
+
+            // Пытаемся скопировать данные в буфер обмена
+            navigator.clipboard.writeText(jsonData).then(function () {
+                alert("Данные успешно скопированы! Вы также можете их увидеть ниже.");
+            }).catch(function () {
+                alert("Не удалось скопировать автоматически. Скопируйте данные вручную ниже.");
             });
         });
     </script>
