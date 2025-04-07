@@ -6,14 +6,14 @@
     <title>Создание персонажа</title>
     <style>
         body {
-            background-color: #1e2a38; /* Темно-синий фон */
-            color: #dce4f0; /* Светло-голубой текст */
+            background-color: #1e2a38;
+            color: #dce4f0;
             font-family: 'Arial', sans-serif;
             margin: 0;
             padding: 20px;
             display: flex;
             justify-content: center;
-            align-items: center; /* Центрируем контент по вертикали */
+            align-items: center;
             height: 100vh;
         }
 
@@ -21,13 +21,14 @@
             max-width: 400px;
             width: 100%;
             padding: 20px;
-            background-color: #243447; /* Темный контейнер с голубым оттенком */
+            background-color: #243447;
             border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); /* Тень */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+            position: relative;
         }
 
         h1 {
-            color: #a7c6eb; /* Светло-голубой заголовок */
+            color: #a7c6eb;
             text-align: center;
             margin-bottom: 20px;
         }
@@ -35,7 +36,7 @@
         label {
             display: block;
             margin-bottom: 5px;
-            color: #b3cbe5; /* Светлый оттенок текста полей */
+            color: #b3cbe5;
         }
 
         textarea, input[type="text"] {
@@ -44,8 +45,8 @@
             margin-bottom: 15px;
             border: 1px solid #4a6fa6;
             border-radius: 4px;
-            background-color: #1c2c3a; /* Тёмные поля */
-            color: #ffffff; /* Белый текст в полях */
+            background-color: #1c2c3a;
+            color: #ffffff;
             box-sizing: border-box;
         }
 
@@ -57,8 +58,8 @@
         button {
             width: 100%;
             padding: 10px;
-            background-color: #528bda; /* Голубая кнопка */
-            color: #ffffff; /* Белый текст */
+            background-color: #528bda;
+            color: #ffffff;
             border: none;
             border-radius: 4px;
             cursor: pointer;
@@ -66,7 +67,7 @@
         }
 
         button:hover {
-            background-color: #356bb3; /* Темнее при наведении */
+            background-color: #356bb3;
         }
 
         .checkbox-label {
@@ -74,10 +75,21 @@
             align-items: center;
             margin-bottom: 15px;
             color: #b3cbe5;
+            gap: 8px;
         }
 
-        input[type="checkbox"] {
-            margin-right: 10px;
+        .info-button {
+            width: 20px;
+            height: 20px;
+            background-color: #356bb3;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         .copy-output {
@@ -87,7 +99,7 @@
             border-radius: 4px;
             border: 1px solid #4a6fa6;
             color: #dce4f0;
-            white-space: pre-wrap; /* Сохраняем форматирование JSON */
+            white-space: pre-wrap;
         }
 
         .copy-note {
@@ -98,74 +110,80 @@
     </style>
 </head>
 <body>
+<div class="form-container">
+    <h1>Введите данные персонажа</h1>
 
-    <div class="form-container">
-        <h1>Введите данные персонажа</h1>
+    <label for="instruct">Поведение:</label>
+    <textarea id="instruct" maxlength="1000" placeholder="Ты Аква из аниме..."></textarea>
 
-        <!-- Поля для ввода данных -->
-        <label for="instruct">Поведение:</label>
-        <textarea id="instruct" maxlength="1000" placeholder="Ты Аква из аниме Коносуба, ты богиня, которая попала в обычный мир, ты веселая и любишь выпить. Ты тайна влюблена в главного героя"></textarea>
+    <label for="greeting">Приветствие:</label>
+    <textarea id="greeting" maxlength="400" placeholder="*смущенно смотрит на тебя*..."></textarea>
 
-        <label for="greeting">Приветствие:</label>
-        <textarea id="greeting" maxlength="400" placeholder="*смущенно смотрит на тебя*
+    <label for="name">Имя:</label>
+    <input type="text" id="name" placeholder="Аква">
 
-Т-ты очень красивый...
-
-*прикрыла лицо руками*"></textarea>
-
-        <label for="name">Имя:</label>
-        <input type="text" id="name" placeholder="Аква">
-
-        <label for="prompt_p">Описание внешности:</label>
-        <input type="text" id="prompt_p" placeholder="Аква из коносубы, голубые волосы, голубые глаза, спортивное тело">
-
-        <!-- Чекбокс "Это реальный человек?" -->
-        <div class="checkbox-label">
-            <input type="checkbox" id="realPerson">
-            <label for="realPerson">Это реальный человек?</label>
-        </div>
-
-        <!-- Кнопка для копирования данных -->
-        <button id="copyDataBtn">Копировать данные</button>
-
-        <!-- Поле для вывода данных -->
-        <pre id="copyOutput" class="copy-output"></pre>
-        <p class="copy-note">Если данные не скопировались автоматически, скопируйте их отсюда и отправьте боту</p>
+    <!-- Автогенерация внешности -->
+    <div class="checkbox-label">
+        <input type="checkbox" id="autoAppearance" checked>
+        <label for="autoAppearance">Автогенерация внешности</label>
+        <button class="info-button" onclick="alert('После отправки данных отправьте арт. Бот определит внешность, а если не узнает персонажа — сгенерирует максимально похожего.')">?</button>
     </div>
 
-    <script>
-        document.getElementById("copyDataBtn").addEventListener("click", function () {
-            // Получаем значения из полей ввода
-            const instruct = document.getElementById("instruct").value;
-            const greeting = document.getElementById("greeting").value;
-            const name = document.getElementById("name").value;
-            const prompt_p = document.getElementById("prompt_p").value;
-            const realPerson = document.getElementById("realPerson").checked; // Получаем состояние чекбокса
+    <!-- Поле внешности -->
+    <div id="appearanceInputGroup" style="display: none;">
+        <label for="prompt_p">Описание внешности:</label>
+        <input type="text" id="prompt_p" placeholder="Опишите внешность персонажа на английском...">
+    </div>
 
-            // Создаем объект данных с русскими ключами
-            const data = {
-                "поведение": instruct,
-                "приветствие": greeting,
-                "имя": name,
-                "описание_внешности": prompt_p,
-                "реальный_человек": realPerson ? "ДА" : "НЕТ" // Используем "ДА" или "НЕТ" в зависимости от состояния чекбокса
-            };
+    <!-- Это реальный человек -->
+    <div class="checkbox-label">
+        <input type="checkbox" id="realPerson">
+        <label for="realPerson">Это реальный человек?</label>
+        <button class="info-button" onclick="alert('Если отмечен этот пункт, то после отправки данных и фото с лицом, бот будет создавать арты с этим человеком')">?</button>
+    </div>
 
-            // Преобразуем объект в JSON строку
-            const jsonData = JSON.stringify(data, null, 2); // Второй параметр для удобочитаемости
+    <button id="copyDataBtn">Копировать данные</button>
+    <pre id="copyOutput" class="copy-output"></pre>
+    <p class="copy-note">Если данные не скопировались автоматически, скопируйте их отсюда и отправьте боту</p>
+</div>
 
-            // Показываем текст в поле для копирования
-            const output = document.getElementById("copyOutput");
-            output.textContent = jsonData;
+<script>
+    const autoAppearanceCheckbox = document.getElementById("autoAppearance");
+    const appearanceInputGroup = document.getElementById("appearanceInputGroup");
 
-            // Пытаемся скопировать данные в буфер обмена
-            navigator.clipboard.writeText(jsonData).then(function () {
-                alert("Данные успешно скопированы! Вы также можете их увидеть ниже.");
-            }).catch(function () {
-                alert("Не удалось скопировать автоматически. Скопируйте данные вручную ниже.");
-            });
+    autoAppearanceCheckbox.addEventListener("change", function () {
+        appearanceInputGroup.style.display = this.checked ? "none" : "block";
+    });
+
+    document.getElementById("copyDataBtn").addEventListener("click", function () {
+        const instruct = document.getElementById("instruct").value;
+        const greeting = document.getElementById("greeting").value;
+        const name = document.getElementById("name").value;
+        const realPerson = document.getElementById("realPerson").checked;
+        const autoAppearance = autoAppearanceCheckbox.checked;
+
+        let appearanceDescription = "AUTO";
+        if (!autoAppearance) {
+            appearanceDescription = document.getElementById("prompt_p").value || "";
+        }
+
+        const data = {
+            "поведение": instruct,
+            "приветствие": greeting,
+            "имя": name,
+            "описание_внешности": appearanceDescription,
+            "реальный_человек": realPerson ? "ДА" : "НЕТ"
+        };
+
+        const jsonData = JSON.stringify(data, null, 2);
+        document.getElementById("copyOutput").textContent = jsonData;
+
+        navigator.clipboard.writeText(jsonData).then(function () {
+            alert("Данные успешно скопированы! Отправьте их боту");
+        }).catch(function () {
+            alert("Не удалось скопировать автоматически. Скопируйте данные вручную ниже.");
         });
-    </script>
-
+    });
+</script>
 </body>
 </html>
