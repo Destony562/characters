@@ -152,7 +152,6 @@
         const instruct = document.getElementById("instruct").value;
         const greeting = document.getElementById("greeting").value;
         const name = document.getElementById("name").value;
-        const realPerson = document.getElementById("realPerson").checked;
         const autoAppearance = autoAppearanceCheckbox.checked;
 
         let appearanceDescription = "AUTO";
@@ -165,7 +164,6 @@
             "приветствие": greeting,
             "имя": name,
             "описание_внешности": appearanceDescription,
-            "реальный_человек": realPerson ? "ДА" : "НЕТ"
         };
 
         const jsonData = JSON.stringify(data, null, 2);
